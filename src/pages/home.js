@@ -3,57 +3,64 @@ import { Title } from "../components/Title";
 import { AddTodo } from "../components/AddTodo";
 import { TodoList } from "../components/TodoList";
 import { Footer } from "../components/Footer";
-
-const todosArr = [
-  {
-    id: 0,
-    value: "TODO 1",
-    isCompleted: false
-  },
-  {
-    id: 1,
-    value: "TODO 2",
-    isCompleted: false
-  },
-  {
-    id: 2,
-    value: "ToDO 3",
-    isCompleted: false
-  }
-];
+import { addNewTodo, deleteTodo, updateTodo, fetchTodos } from "../utils/api";
+import { convertTodosObjToArr } from "../utils/helpers";
 
 export class Home extends Component {
-  state = { 
-    todos: todosArr
+  state = {
+    todos: []
   };
 
-  addTodo = text => {
-    const newTodo = {
-      id: this.state.todos.length,
-      value:text,
-      isCompleted: false
-    };
+  async componentDidMount() {
+    console.log('called componentDidMount')
+    await this.fetchTodos()    
+  }
 
+  fetchTodos = async () => {
+    console.log('called fetchTodos')
+
+    const todosObj = await fetchTodos();
+    const todosArr = convertTodosObjToArr(todosObj)
     this.setState({
-      todos: this.state.todos.concat(newTodo)
+      todos: todosArr
     });
   };
 
-  removeTodo = id => {
-    const newTodos = this.state.todos.filter(todo => todo.id !== id);
+    addTodo = async text => {
+   
+    
+    const todo = await addNewTodo(text);
+    console.log('called addTodo' + todo)
+    this.setState({
+      todos: this.state.todos.concat(todo)
+    });
+  };
 
+  removeTodo = async id => {
+    const newTodos = this.state.todos.filter(todo => todo.id !== id);
     this.setState({
       todos: newTodos
     });
+
+    await deleteTodo(id);
   };
 
+  updateTodo = async todo => {
+    await updateTodo(todo);
+    this.setState({
+      todos: {
+        ...this.state.todos,
+        [todo.id]: todo
+      }
+    });
+  };
   render() {
     return (
       <div id="container">
         <Title />
         <AddTodo addTodo={this.addTodo} />
         <TodoList todos={this.state.todos} removeTodo={this.removeTodo} />
-        <Footer/>
+        <Footer />
       </div>
     );
   }
