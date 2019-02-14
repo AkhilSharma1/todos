@@ -1,7 +1,7 @@
 // import React, { Component } from "react";
 import React,{ useState } from "react";
 
-import { Title } from "../components/Title";
+import { Header} from "../components/Header";
 import { AddTodo } from "../components/AddTodo";
 import { TodoList } from "../components/TodoList";
 import { Footer } from "../components/Footer";
@@ -101,7 +101,7 @@ export const Home = props => {
   
   return (
     <div id="container">
-      <Title />
+      <Header />
       <AddTodo addTodo={addTodo} />
       <TodoList todos={todos} removeTodo={removeTodo} updateTodo = {updateTodoItem}/>
       <Footer />
