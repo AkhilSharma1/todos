@@ -4,49 +4,27 @@ import { AddTodo } from "../components/AddTodo";
 import { TodoList } from "../components/TodoList";
 import { Footer } from "../components/Footer";
 import { addNewTodo, deleteTodo, updateTodo, fetchTodos } from "../utils/api";
-import { convertTodosObjToArr } from "../utils/helpers";
+import { convertTodosObjToArr, isEmptyObject } from "../utils/helpers";
 
 export class Home extends Component {
   state = {
-    todos: []
+    todos: {}
   };
 
   async componentDidMount() {
-    console.log('called componentDidMount')
-    await this.fetchTodos()    
+    console.log("called componentDidMount");
+    await this.fetchTodos();
   }
 
   fetchTodos = async () => {
-    console.log('called fetchTodos')
-
     const todosObj = await fetchTodos();
-    const todosArr = convertTodosObjToArr(todosObj)
     this.setState({
-      todos: todosArr
+      todos: todosObj
     });
   };
 
-    addTodo = async text => {
-   
-    
+  addTodo = async text => {
     const todo = await addNewTodo(text);
-    console.log('called addTodo' + todo)
-    this.setState({
-      todos: this.state.todos.concat(todo)
-    });
-  };
-
-  removeTodo = async id => {
-    const newTodos = this.state.todos.filter(todo => todo.id !== id);
-    this.setState({
-      todos: newTodos
-    });
-
-    await deleteTodo(id);
-  };
-
-  updateTodo = async todo => {
-    await updateTodo(todo);
     this.setState({
       todos: {
         ...this.state.todos,
@@ -54,12 +32,47 @@ export class Home extends Component {
       }
     });
   };
+
+  removeTodo = async id => {
+    const { [id]: value, ...newTodosObj } = this.state.todos;
+    this.setState({
+      todos: newTodosObj
+    });
+
+    await deleteTodo(id);
+  };
+
+  toggleCompleted = async id => {
+    const todoToUpdate = this.state.todos[id];
+    todoToUpdate.isCompleted = !todoToUpdate.isCompleted;
+    await this.updateTodo(todoToUpdate);
+  };
+
+  updateTodo = async todo => {
+    this.setState({
+      todos: {
+        ...this.state.todos,
+        [todo.id]: todo
+      }
+    });
+    await updateTodo(todo);
+  };
   render() {
+    const todosObj = this.state.todos;
+
     return (
       <div id="container">
         <Title />
         <AddTodo addTodo={this.addTodo} />
-        <TodoList todos={this.state.todos} removeTodo={this.removeTodo} />
+        {isEmptyObject(todosObj) ? (
+          <h1> Add some Todos!</h1>
+        ) : (
+          <TodoList
+            todosArr={convertTodosObjToArr(todosObj)}
+            removeTodo={this.removeTodo}
+            updateTodo={this.updateTodo}
+          />
+        )}
         <Footer />
       </div>
     );

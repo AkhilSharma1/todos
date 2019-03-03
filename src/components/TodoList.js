@@ -1,10 +1,10 @@
 import React from "react";
 import { TodoListItem } from "./TodoListItem";
 
-export function TodoList({ todos, removeTodo }) {
+export function TodoList({ todosArr, removeTodo, updateTodo }) {
 
-  const todoItems = todos.map((todo) => (
-    <TodoListItem key={todo.id} todo={todo} removeTodo ={removeTodo} />
+  const todoItems = todosArr.map((todo) => (
+    <TodoListItem key={todo.id} todo={todo} removeTodo ={removeTodo} updateTodo = {updateTodo} />
   ));
 
   return todoItems;
