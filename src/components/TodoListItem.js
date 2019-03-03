@@ -1,13 +1,11 @@
 import React from "react";
 
-export const TodoListItem = props => {
-  const todo = props.todo;
+export const TodoListItem = ({todo, removeTodo, toggleCompleted}) => {
   return (
-    <>
-      <p>
-        {todo.value}
-        <button onClick={() => props.removeTodo(todo.id)}>X</button>
-      </p>
-    </>
+    <div>
+      <input type='checkbox' defaultChecked={todo.isCompleted} onChange={()=>toggleCompleted(todo.id)}/>
+        <span style = {todo.isCompleted ?{textDecoration:'line-through'}:{}}>{todo.value}</span>
+        <button onClick={() => removeTodo(todo.id)}>X</button>
+    </div>
   );
 };
