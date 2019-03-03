@@ -5,6 +5,8 @@ export class AddTodo extends Component {
     value: ""
   };
 
+  myRef = React.createRef()
+
   handleTodoChange = e => {
     this.setState({
       value: e.target.value
@@ -18,6 +20,7 @@ export class AddTodo extends Component {
         this.setState({
             value: ''
         });
+        this.myRef.current.focus()
     }
   }
 
@@ -29,6 +32,7 @@ export class AddTodo extends Component {
           placeholder=" Add a todo here..."
           autoComplete="off"
           onChange={this.handleTodoChange}
+          ref = {this.myRef}
         />
         <input type="submit" value="ADD" />
       </form>
